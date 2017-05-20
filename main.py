@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import sys
+import sqlite3
+import os.path
 
 if len(sys.argv) == 1:
     print("\nUsage: " + sys.argv[0] + " <command> (<parameter>)\n")
@@ -13,8 +15,18 @@ if len(sys.argv) == 1:
     print("-mark <video_id> -> (un)mark given video.\n")
     sys.exit(1)
 
+if not os.path.isfile("database"):
+    connection = sqlite3.connect("database")
+    cursor = connection.cursor()
+    cursor.execute("CREATE TABLE config (name text, value text)")
+    cursor.execute("CREATE TABLE playlists (name text, user text, playlist_id integer)")
+    cursor.execute("CREATE TABLE videos (title text, url text, published_at text, status integer, playlist_id integer)")
+    connection.commit()
+    connection.close()
+    
 if sys.argv[1] == "-addkey":
-    print("addkey")
+    if len(sys.argv) == 3:
+        print("Key added")
 elif sys.argv[1] == "-showkey":
     print("showkey")
 elif sys.argv[1] == "-search":
